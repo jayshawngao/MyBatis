@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jayshawn.dao.DepartmentMapper">
+	<cache readOnly="true"></cache>
+	<select id="getDepById" resultType="com.jayshawn.model.Department">
+		select * from department where id = #{id}
+	</select>
+	
+	<resultMap type="com.jayshawn.model.Department" id="depemp">
+		<id column="did" property="id"/>
+		<result column="dname" property="name"/>
+		<collection property="employees" ofType="com.jayshawn.model.Employee">
+			<id column="eid" property="id"/>
+			<result column="ename" property="name"/>
+			<association property="department" javaType="com.jayshawn.model.Department">
+				<id column="did" property="id"/>
+				<result column="dname" property="name"/>
+			</association>
+		</collection>
+	</resultMap>
+	
+	<select id="getDepEmp" resultMap="depemp">
+		SELECT d.id AS did, d.name AS dname, e.id AS eid, e.name AS ename 
+		FROM department AS d, employee AS e WHERE d.id = #{id} AND d.id=e.department;
+	</select>
+	
+	<!-- DepartmentMapper.xml -->
+	<resultMap type="com.jayshawn.model.Department" id="depByStep">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<collection property="employees" select="com.jayshawn.dao.EmployeeMapper.getEmpByDepId" column="id">
+			<id column="id" property="id"/>
+			<result column="name" property="name"/>
+		</collection>
+	</resultMap>
+	
+	<select id="getDepByStep" resultMap="depByStep">
+		select * from department where id=#{id}
+	</select>
+	
+	<update id="updateDepById">
+		update department set name=#{name} where id=#{id}
+	</update>
+
+</mapper>

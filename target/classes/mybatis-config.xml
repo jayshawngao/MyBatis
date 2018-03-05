@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+
+	<properties resource="db.properties"></properties>
+	<settings>
+		<setting name="logImpl" value="STDOUT_LOGGING"/>
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="aggressiveLazyLoading" value="false" />
+	</settings>
+
+	<!-- 注册插件 -->
+	<plugins>
+		<plugin interceptor="com.jayshawn.dao.MyFirstPlugin"></plugin>
+		<plugin interceptor="com.jayshawn.dao.MySecondPlugin"></plugin>
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+			<!-- 使用下面的方式配置参数，后面会有所有的参数介绍 -->
+			<property name="param1" value="value1" />
+		</plugin>
+	</plugins>
+	
+	
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${userName}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="EmployeeMapper.xml" />
+		<mapper resource="DepartmentMapper.xml" />
+	</mappers>
+</configuration>

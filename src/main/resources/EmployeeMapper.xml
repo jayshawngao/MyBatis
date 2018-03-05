@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jayshawn.dao.EmployeeMapper">
+	
+	<resultMap type="com.jayshawn.model.Employee" id="employee">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+	</resultMap>
+	<select id="getEmpById" resultMap="employee" databaseId="mysql">
+		select * from employee where id = #{id}
+	</select>
+	
+
+	<insert id="addEmp" useGeneratedKeys="true" keyProperty="id">
+		insert into employee(name,department) values(#{name},#{department.id})
+	</insert>
+	
+	<insert id="addAllEmp" useGeneratedKeys="true" keyProperty="id">
+		insert into employee(name) values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.name})
+		</foreach>
+	</insert>
+	
+	<delete id="deleteEmpById">
+		delete from employee where id = #{id}
+	</delete>
+	
+	<update id="updateEmp">
+		update employee set name=#{name}
+	</update>
+	
+	<sql id="template"> select * from ${table}  </sql>
+	
+	<select id="getEmpById" resultType="com.jayshawn.model.Employee">
+		<include refid="template">
+			<property name="table" value="employee"/>
+		</include>
+		where id = #{id}
+	</select>
+	
+	<select id="getAllEmp" resultType="com.jayshawn.model.Employee">
+		select * from employee
+	</select>
+	
+	<select id="getMapById" resultType="map">
+		select * from employee where id=#{id}
+	</select>
+	
+	<select id="getMap" resultType="com.jayshawn.model.Employee">
+		select * from employee
+	</select>
+	
+	<resultMap type="com.jayshawn.model.Employee" id="empdep">
+		<id column="eid" property="id"/>
+		<result column="ename" property="name"/>
+		<association property="department" javaType="com.jayshawn.model.Department">
+			<id column="did" property="id"/>
+			<result column="dname" property="name"/>
+		</association>
+	</resultMap>
+	
+	<select id="getEmpDep" resultMap="empdep">
+		select e.id as eid, e.name as ename, d.id as did, d.name as dname from employee as e, department as d where e.id = #{id}
+	</select>
+	
+	<resultMap type="com.jayshawn.model.Employee" id="empByStep">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<association property="department" select="com.jayshawn.dao.DepartmentMapper.getDepById" column="department"></association>
+	</resultMap>
+	<select id="getEmpByStep" resultMap="empByStep">
+		select * from employee where id = #{id}
+	</select>
+	
+	<select id="getEmpByDepId" resultType="com.jayshawn.model.Employee">
+		select * from employee where department=#{id}
+	</select>
+	
+	<!-- EmployeeMapper.xml -->
+	<insert id="addEmpStatus"  useGeneratedKeys="true" keyProperty="id">
+		insert into employee(name,department,empstatus)values(#{name},#{department.id},#{empStatus})
+	</insert>
+	
+</mapper>
